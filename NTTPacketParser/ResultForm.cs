@@ -45,11 +45,30 @@ namespace NTTPacketParser
 			dgvMain.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			dgvMain.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			dgvMain.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+			dgvMain.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(25, 25, 35);
+			dgvMain.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+			dgvMain.BorderStyle = BorderStyle.None;
 
 			// Configure TLV grid
 			dgvOtherDetails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 			dgvOtherDetails.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			dgvOtherDetails.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+			dgvMain.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(25, 25, 35);
+			dgvMain.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+			dgvOtherDetails.BorderStyle = BorderStyle.None;
+
+			// Style other controls
+			foreach (Control ctrl in this.Controls)
+			{
+				if (ctrl is Button)
+				{
+					var btn = (Button)ctrl;
+					btn.BackColor = Color.FromArgb(0, 120, 215);
+					btn.ForeColor = Color.White;
+					btn.FlatStyle = FlatStyle.Flat;
+					btn.FlatAppearance.BorderSize = 0;
+				}
+			}
 		}
 
 		protected override void OnFormClosed(FormClosedEventArgs e)

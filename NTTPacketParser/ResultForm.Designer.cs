@@ -94,6 +94,7 @@
 			Controls.Add(dgvOtherDetails);
 			Controls.Add(dgvMain);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
+			MaximizeBox = false;
 			Name = "ResultForm";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "ResultForm";

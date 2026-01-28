@@ -13,6 +13,19 @@ namespace NTTPacketParser
 		{
 			comboBox1.Items.Add("Response");
 			comboBox1.SelectedIndex = 0;
+
+			// Style controls
+			foreach (Control ctrl in this.Controls)
+			{
+				if (ctrl is Button)
+				{
+					var btn = (Button)ctrl;
+					btn.BackColor = Color.FromArgb(0, 120, 215);
+					btn.ForeColor = Color.White;
+					btn.FlatStyle = FlatStyle.Flat;
+					btn.FlatAppearance.BorderSize = 0;
+				}
+			}
 		}
 
 		private void btnParse_Click(object sender, EventArgs e)

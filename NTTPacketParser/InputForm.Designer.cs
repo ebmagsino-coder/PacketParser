@@ -90,6 +90,7 @@
 			Controls.Add(txtInput);
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
+			MaximizeBox = false;
 			Name = "InputForm";
 			Text = "Packet Parser";
 			Load += InputForm_Load;
