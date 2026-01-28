@@ -176,7 +176,7 @@ namespace NTTPacketParser.Helpers
 			// 26. Other Details (TLV)
 			pos = reader.Position;
 			OtherDetails = TlvParser.Parse(reader, otherDetailsLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to data table" });
+			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "Refer to Parsed Data Part table" });
 
 			// 27. Transaction Date and Time
 			pos = reader.Position;

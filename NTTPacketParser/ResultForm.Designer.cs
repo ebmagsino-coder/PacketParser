@@ -52,7 +52,7 @@
 			dgvOtherDetails.Location = new Point(25, 351);
 			dgvOtherDetails.Name = "dgvOtherDetails";
 			dgvOtherDetails.RowHeadersWidth = 51;
-			dgvOtherDetails.Size = new Size(819, 185);
+			dgvOtherDetails.Size = new Size(819, 208);
 			dgvOtherDetails.TabIndex = 1;
 			// 
 			// label1
@@ -75,7 +75,7 @@
 			// 
 			// btnClose
 			// 
-			btnClose.Location = new Point(736, 555);
+			btnClose.Location = new Point(736, 576);
 			btnClose.Name = "btnClose";
 			btnClose.Size = new Size(108, 45);
 			btnClose.TabIndex = 4;
@@ -87,12 +87,13 @@
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(868, 613);
+			ClientSize = new Size(868, 636);
 			Controls.Add(btnClose);
 			Controls.Add(label2);
 			Controls.Add(label1);
 			Controls.Add(dgvOtherDetails);
 			Controls.Add(dgvMain);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Name = "ResultForm";
 			Text = "ResultForm";
 			Load += ResultForm_Load;

@@ -89,6 +89,7 @@
 			Controls.Add(label2);
 			Controls.Add(txtInput);
 			Controls.Add(label1);
+			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Name = "InputForm";
 			Text = "Paket Parser";
 			Load += InputForm_Load;
