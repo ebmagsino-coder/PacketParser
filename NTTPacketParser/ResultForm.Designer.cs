@@ -95,6 +95,7 @@
 			Controls.Add(dgvMain);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Name = "ResultForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "ResultForm";
 			Load += ResultForm_Load;
 			((System.ComponentModel.ISupportInitialize)dgvMain).EndInit();

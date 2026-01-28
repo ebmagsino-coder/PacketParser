@@ -91,7 +91,7 @@
 			Controls.Add(label1);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			Name = "InputForm";
-			Text = "Paket Parser";
+			Text = "Packet Parser";
 			Load += InputForm_Load;
 			ResumeLayout(false);
 			PerformLayout();
