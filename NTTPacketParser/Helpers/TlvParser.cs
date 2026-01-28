@@ -11,16 +11,15 @@ namespace NTTPacketParser.Helpers
 	{
 		private static readonly Dictionary<byte, string> TagNames = new()
 		{
-			{ 0x01, "VISA CREDIT" },
-			{ 0x02, "Application ID" },
-			{ 0x03, "Application Cryptogram" },
-			{ 0x0D, "Issuer Application Data" }
+			{ 0x01, "App Name" },
+			{ 0x02, "App AID" },
+			{ 0x03, "TC" },
+			{ 0x0D, "Original RRN" }
 		};
 
 		public static List<TlvField> Parse(HexReader r, int totalLength)
 		{
 			var list = new List<TlvField>();
-
 			int start = r.Position;
 			int end = start + totalLength;
 
@@ -29,6 +28,7 @@ namespace NTTPacketParser.Helpers
 				if (r.Position + 2 > end)
 					break;
 
+				int tagPos = r.Position;
 				byte tag = r.ReadByte();
 				int len = r.ReadByte();
 
@@ -36,21 +36,40 @@ namespace NTTPacketParser.Helpers
 					break;
 
 				byte[] valueBytes = r.ReadBytes(len);
-				string value = Encoding.ASCII.GetString(valueBytes);
+				string value;
 
-				// For hex values, show both hex and ASCII if printable
-				if (tag == 0x03 || tag == 0x0D)
+				// Handle specific tag formatting
+				if (tag == 0x03) // TC - convert ASCII hex to actual hex
 				{
-					value = string.Join("", valueBytes.Select(b => b.ToString("X2")));
+					// ASCII "39383334393642333143363342463642" -> hex "983496B31C63BF6B"
+					string asciiHex = Encoding.ASCII.GetString(valueBytes);
+					value = "";
+					for (int i = 0; i < asciiHex.Length; i += 2)
+					{
+						if (i + 1 < asciiHex.Length)
+						{
+							byte hexByte = Convert.ToByte(asciiHex.Substring(i, 2), 16);
+							value += hexByte.ToString("X2");
+						}
+					}
+				}
+				else if (tag == 0x0D) // Original RRN - show as ASCII
+				{
+					value = Encoding.ASCII.GetString(valueBytes);
+				}
+				else // Default ASCII
+				{
+					value = Encoding.ASCII.GetString(valueBytes);
 				}
 
 				string tagName = TagNames.ContainsKey(tag) ? TagNames[tag] : $"Tag {tag:X2}";
+				string hexValue = r.GetHexString(tagPos, 2 + len); // Tag + Length + Value
 
 				list.Add(new TlvField
 				{
-					Tag = tag.ToString("X2"),
+					Tag = $"0x{tag:X2}",
 					TagName = tagName,
-					Length = len,
+					HexValue = hexValue,
 					Value = value
 				});
 			}

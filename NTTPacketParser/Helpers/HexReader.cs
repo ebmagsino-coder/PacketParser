@@ -47,14 +47,20 @@ namespace NTTPacketParser.Helpers
 		public string ReadAscii(int len)
 			=> Encoding.ASCII.GetString(ReadBytes(len));
 
+		public string GetHexString(int startPos, int length)
+		{
+			return string.Join(" ", _data.Skip(startPos).Take(length).Select(b => b.ToString("X2")));
+		}
+
 		public decimal ReadAmount(int byteLen)
 		{
 			byte[] bytes = ReadBytes(byteLen);
-			// Convert bytes to decimal amount (last 2 digits are cents)
+			// For hex 00 00 00 05 34 32, treat as BCD: 05 34 32 = 534.32
 			long amount = 0;
 			for (int i = 0; i < bytes.Length; i++)
 			{
-				amount = (amount << 8) | bytes[i];
+				byte b = bytes[i];
+				amount = amount * 100 + ((b >> 4) * 10) + (b & 0x0F);
 			}
 			return amount / 100m;
 		}

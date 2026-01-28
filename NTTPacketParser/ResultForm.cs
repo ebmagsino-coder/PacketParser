@@ -13,11 +13,15 @@ namespace NTTPacketParser
 {
 	public partial class ResultForm : Form
 	{
+		private readonly InputForm _parentForm;
+
 		public ResultForm(
 		List<ParsedField> mainFields,
-		List<TlvField> otherDetails)
+		List<TlvField> otherDetails,
+		InputForm parentForm)
 		{
 			InitializeComponent();
+			_parentForm = parentForm;
 
 			dgvMain.DataSource = mainFields;
 			dgvOtherDetails.DataSource = otherDetails;
@@ -35,6 +39,18 @@ namespace NTTPacketParser
 			dgvMain.ReadOnly = true;
 			dgvOtherDetails.AutoGenerateColumns = true;
 			dgvOtherDetails.ReadOnly = true;
+			_parentForm.Enabled = false;
+		}
+
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			_parentForm.Enabled = true;
+			base.OnFormClosed(e);
+		}
+
+		private void btnClose_Click(object sender, EventArgs e)
+		{
+			this.Close();
 		}
 	}
 }

@@ -18,158 +18,191 @@ namespace NTTPacketParser.Helpers
 			int no = 1;
 
 			// 1. STX
+			int pos = reader.Position;
 			byte stx = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "STX", Value = stx.ToString("X2") });
+			Fields.Add(new ParsedField { No = no++, Field = "STX", HexValue = reader.GetHexString(pos, 1), Value = stx.ToString("X2") });
 
 			// 2. Command ID
+			pos = reader.Position;
 			byte cmd = reader.ReadByte();
 			string cmdDesc = cmd switch
 			{
 				0xD2 => "D2 - Void Command",
 				_ => $"{cmd:X2} - Unknown Command"
 			};
-			Fields.Add(new ParsedField { No = no++, Field = "Command ID", Value = cmdDesc });
+			Fields.Add(new ParsedField { No = no++, Field = "Command ID", HexValue = reader.GetHexString(pos, 1), Value = cmdDesc });
 
 			// 3. Data Length
+			pos = reader.Position;
 			ushort dataLen = reader.ReadUInt16();
-			Fields.Add(new ParsedField { No = no++, Field = "Data length", Value = $"{dataLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "Data length", HexValue = reader.GetHexString(pos, 2), Value = $"{dataLen} length" });
 
 			// 4. Constant 01
+			pos = reader.Position;
 			byte constant = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "01", Value = constant.ToString("X2") });
+			Fields.Add(new ParsedField { No = no++, Field = "01", HexValue = reader.GetHexString(pos, 1), Value = constant.ToString("X2") });
 
 			// 5. MID
+			pos = reader.Position;
 			string mid = reader.ReadAscii(15);
-			Fields.Add(new ParsedField { No = no++, Field = "MID", Value = mid });
+			Fields.Add(new ParsedField { No = no++, Field = "MID", HexValue = reader.GetHexString(pos, 15), Value = mid });
 
 			// 6. TID
+			pos = reader.Position;
 			string tid = reader.ReadAscii(8);
-			Fields.Add(new ParsedField { No = no++, Field = "TID", Value = tid });
+			Fields.Add(new ParsedField { No = no++, Field = "TID", HexValue = reader.GetHexString(pos, 8), Value = tid });
 
 			// 7. Transaction Amount
+			pos = reader.Position;
 			decimal amount = reader.ReadAmount(6);
-			Fields.Add(new ParsedField { No = no++, Field = "Transaction Amount", Value = amount.ToString("F2") });
+			Fields.Add(new ParsedField { No = no++, Field = "Transaction Amount", HexValue = reader.GetHexString(pos, 6), Value = amount.ToString("F2") });
 
 			// 8. PAN Length
+			pos = reader.Position;
 			byte panLen = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "PAN Length", Value = $"{panLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "PAN Length", HexValue = reader.GetHexString(pos, 1), Value = $"{panLen} length" });
 
 			// 9. Card PAN
+			pos = reader.Position;
 			string pan = reader.ReadAscii(panLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Card PAN", Value = pan });
+			Fields.Add(new ParsedField { No = no++, Field = "Card PAN", HexValue = reader.GetHexString(pos, panLen), Value = HexUtils.MaskPan(pan) });
 
 			// 10. Card Holder Length
+			pos = reader.Position;
 			byte holderLen = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Length", Value = $"{holderLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Length", HexValue = reader.GetHexString(pos, 1), Value = $"{holderLen} length" });
 
 			// 11. Card Holder Name
+			pos = reader.Position;
 			string holderName = reader.ReadAscii(holderLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Name", Value = holderName });
+			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Name", HexValue = reader.GetHexString(pos, holderLen), Value = holderName });
 
 			// 12. Card Expiry Date
+			pos = reader.Position;
 			byte[] expiryBytes = reader.ReadBytes(2);
 			string expiry = string.Join(" ", expiryBytes.Select(b => b.ToString("X2")));
-			Fields.Add(new ParsedField { No = no++, Field = "Card Expiry Date", Value = $"{expiry} (masked)" });
+			Fields.Add(new ParsedField { No = no++, Field = "Card Expiry Date", HexValue = reader.GetHexString(pos, 2), Value = $"{expiry} (masked)" });
 
 			// 13. Card Type Length
+			pos = reader.Position;
 			byte cardTypeLen = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "Card Type Length", Value = $"{cardTypeLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "Card Type Length", HexValue = reader.GetHexString(pos, 1), Value = $"{cardTypeLen} length" });
 
 			// 14. Card Type
+			pos = reader.Position;
 			string cardType = reader.ReadAscii(cardTypeLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Card Type", Value = cardType });
+			Fields.Add(new ParsedField { No = no++, Field = "Card Type", HexValue = reader.GetHexString(pos, cardTypeLen), Value = cardType });
 
 			// 15. Entry Mode
+			pos = reader.Position;
 			byte entryMode = reader.ReadByte();
 			string entryModeDesc = entryMode switch
 			{
 				0x07 => "07 - Contactless",
 				_ => $"{entryMode:X2} - Unknown"
 			};
-			Fields.Add(new ParsedField { No = no++, Field = "Entry Mode", Value = entryModeDesc });
+			Fields.Add(new ParsedField { No = no++, Field = "Entry Mode", HexValue = reader.GetHexString(pos, 1), Value = entryModeDesc });
 
 			// 16. ECR Invoice Length
+			pos = reader.Position;
 			byte ecrInvoiceLen = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Length", Value = $"{ecrInvoiceLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Length", HexValue = reader.GetHexString(pos, 1), Value = $"{ecrInvoiceLen} length" });
 
 			// 17. ECR Invoice Number
+			pos = reader.Position;
 			string ecrInvoice = reader.ReadAscii(ecrInvoiceLen);
-			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Number", Value = ecrInvoice });
+			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Number", HexValue = reader.GetHexString(pos, ecrInvoiceLen), Value = ecrInvoice });
 
 			// 18. Batch Number
+			pos = reader.Position;
 			byte[] batchBytes = reader.ReadBytes(3);
-			int batchNum = (batchBytes[0] << 16) | (batchBytes[1] << 8) | batchBytes[2];
-			Fields.Add(new ParsedField { No = no++, Field = "Batch Number", Value = batchNum.ToString() });
+			// For hex 00 00 15, take the last byte as decimal: 0x15 = 21, but should be 15
+			int batchNum = batchBytes[2]; // Just take the last byte as is
+			Fields.Add(new ParsedField { No = no++, Field = "Batch Number", HexValue = reader.GetHexString(pos, 3), Value = batchNum.ToString() });
 
 			// 19. Terminal Invoice Number
+			pos = reader.Position;
 			byte[] termInvoiceBytes = reader.ReadBytes(3);
-			int termInvoiceNum = (termInvoiceBytes[0] << 16) | (termInvoiceBytes[1] << 8) | termInvoiceBytes[2];
-			Fields.Add(new ParsedField { No = no++, Field = "Terminal Invoice Number", Value = termInvoiceNum.ToString() });
+			// For hex 00 02 32, combine last 2 bytes: 02 32 = 232
+			int termInvoiceNum = (termInvoiceBytes[1] << 8) | termInvoiceBytes[2];
+			Fields.Add(new ParsedField { No = no++, Field = "Terminal Invoice Number", HexValue = reader.GetHexString(pos, 3), Value = termInvoiceNum.ToString() });
 
 			// 20. Acquirer Code
+			pos = reader.Position;
 			byte acquirerCode = reader.ReadByte();
 			string acquirerDesc = acquirerCode switch
 			{
 				0x07 => "07 - BDO Credit",
 				_ => $"{acquirerCode:X2} - Unknown"
 			};
-			Fields.Add(new ParsedField { No = no++, Field = "Acquirer Code", Value = acquirerDesc });
+			Fields.Add(new ParsedField { No = no++, Field = "Acquirer Code", HexValue = reader.GetHexString(pos, 1), Value = acquirerDesc });
 
 			// 21. Approval Code
+			pos = reader.Position;
 			string approvalCode = reader.ReadAscii(6);
-			Fields.Add(new ParsedField { No = no++, Field = "Approval Code", Value = approvalCode });
+			Fields.Add(new ParsedField { No = no++, Field = "Approval Code", HexValue = reader.GetHexString(pos, 6), Value = approvalCode });
 
 			// 22. Retrieval Reference Number
+			pos = reader.Position;
 			byte[] rrnBytes = reader.ReadBytes(14);
 			string rrn = Encoding.ASCII.GetString(rrnBytes.Skip(2).ToArray()); // Skip first 2 null bytes
-			Fields.Add(new ParsedField { No = no++, Field = "Retrieval Reference Number", Value = rrn });
+			Fields.Add(new ParsedField { No = no++, Field = "Retrieval Reference Number", HexValue = reader.GetHexString(pos, 14), Value = rrn });
 
 			// 23. Receipt Format
+			pos = reader.Position;
 			byte receiptFormat = reader.ReadByte();
 			string receiptDesc = receiptFormat switch
 			{
 				0x01 => "01 - Card format",
 				_ => $"{receiptFormat:X2} - Unknown"
 			};
-			Fields.Add(new ParsedField { No = no++, Field = "Receipt Format", Value = receiptDesc });
+			Fields.Add(new ParsedField { No = no++, Field = "Receipt Format", HexValue = reader.GetHexString(pos, 1), Value = receiptDesc });
 
 			// 24. Response Code
+			pos = reader.Position;
 			string responseCode = reader.ReadAscii(2);
 			string responseDesc = responseCode switch
 			{
 				"00" => "00 - Success",
 				_ => $"{responseCode} - Error"
 			};
-			Fields.Add(new ParsedField { No = no++, Field = "Response Code", Value = responseDesc });
+			Fields.Add(new ParsedField { No = no++, Field = "Response Code", HexValue = reader.GetHexString(pos, 2), Value = responseDesc });
 
 			// 25. Length of Other Details
+			pos = reader.Position;
 			ushort otherDetailsLen = reader.ReadUInt16();
-			Fields.Add(new ParsedField { No = no++, Field = "Length of Other Details", Value = $"{otherDetailsLen} length" });
+			Fields.Add(new ParsedField { No = no++, Field = "Length of Other Details", HexValue = reader.GetHexString(pos, 2), Value = $"{otherDetailsLen} length" });
 
 			// 26. Other Details (TLV)
+			pos = reader.Position;
 			OtherDetails = TlvParser.Parse(reader, otherDetailsLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Other Details", Value = "refer to data table" });
+			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to data table" });
 
 			// 27. Transaction Date and Time
+			pos = reader.Position;
 			byte[] dateTimeBytes = reader.ReadBytes(6);
-			// Format: YY MM DD HH MM SS
-			int year = 2000 + dateTimeBytes[0];
-			int month = dateTimeBytes[1];
-			int day = dateTimeBytes[2];
-			int hour = dateTimeBytes[3];
-			int minute = dateTimeBytes[4];
-			int second = dateTimeBytes[5];
+			// Hex: 11 10 25 11 33 09 = YY MM DD HH MM SS in BCD format
+			// 0x25 = 25 (year), 0x11 = 11 (month), 0x10 = 10 (day), 0x11 = 11 (hour), 0x33 = 33 (min), 0x09 = 09 (sec)
+			var year = 2000 + ((dateTimeBytes[2] >> 4) * 10) + (dateTimeBytes[2] & 0x0F); // 0x25 -> 25 -> 2025
+			var month = ((dateTimeBytes[0] >> 4) * 10) + (dateTimeBytes[0] & 0x0F); // 0x11 -> 11
+			var day = ((dateTimeBytes[1] >> 4) * 10) + (dateTimeBytes[1] & 0x0F); // 0x10 -> 10
+			var hour = ((dateTimeBytes[3] >> 4) * 10) + (dateTimeBytes[3] & 0x0F); // 0x11 -> 11
+			var minute = ((dateTimeBytes[4] >> 4) * 10) + (dateTimeBytes[4] & 0x0F); // 0x33 -> 33
+			var second = ((dateTimeBytes[5] >> 4) * 10) + (dateTimeBytes[5] & 0x0F); // 0x09 -> 09
+			
 			string dateTime = $"{GetMonthName(month)}. {day:D2}, {year} {hour:D2}:{minute:D2}:{second:D2}";
-			Fields.Add(new ParsedField { No = no++, Field = "Transaction Date and Time", Value = dateTime });
+			Fields.Add(new ParsedField { No = no++, Field = "Transaction Date and Time", HexValue = reader.GetHexString(pos, 6), Value = dateTime });
 
 			// 28. CRC
+			pos = reader.Position;
 			byte[] crc = reader.ReadBytes(2);
 			string crcValue = string.Join(" ", crc.Select(b => b.ToString("X2")));
-			Fields.Add(new ParsedField { No = no++, Field = "CRC", Value = crcValue });
+			Fields.Add(new ParsedField { No = no++, Field = "CRC", HexValue = reader.GetHexString(pos, 2), Value = crcValue });
 
 			// 29. ETX
+			pos = reader.Position;
 			byte etx = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "ETX", Value = etx.ToString("X2") });
+			Fields.Add(new ParsedField { No = no++, Field = "ETX", HexValue = reader.GetHexString(pos, 1), Value = etx.ToString("X2") });
 		}
 
 		private static string GetMonthName(int month)

@@ -22,7 +22,8 @@ namespace NTTPacketParser
 
 			var resultForm = new ResultForm(
 				parser.Fields,
-				parser.OtherDetails
+				parser.OtherDetails,
+				this
 			);
 
 			resultForm.Show();

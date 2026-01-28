@@ -10,7 +10,7 @@ namespace NTTPacketParser.Models
 	{
 		public string Tag { get; set; }
 		public string TagName { get; set; }
-		public int Length { get; set; }
+		public string HexValue { get; set; }
 		public string Value { get; set; }
 	}
 }

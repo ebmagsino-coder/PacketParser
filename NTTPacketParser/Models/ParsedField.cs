@@ -10,7 +10,7 @@ namespace NTTPacketParser.Models
 	{
 		public int No { get; set; }
 		public string Field { get; set; }
-		public string Sample { get; set; }
+		public string HexValue { get; set; }
 		public string Value { get; set; }
 
 	}
