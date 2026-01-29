@@ -49,13 +49,13 @@
 			txtInput.Location = new Point(26, 48);
 			txtInput.Multiline = true;
 			txtInput.Name = "txtInput";
-			txtInput.Size = new Size(680, 158);
+			txtInput.Size = new Size(680, 202);
 			txtInput.TabIndex = 1;
 			// 
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(26, 237);
+			label2.Location = new Point(26, 281);
 			label2.Name = "label2";
 			label2.Size = new Size(105, 20);
 			label2.TabIndex = 2;
@@ -64,14 +64,14 @@
 			// comboBox1
 			// 
 			comboBox1.FormattingEnabled = true;
-			comboBox1.Location = new Point(137, 234);
+			comboBox1.Location = new Point(137, 278);
 			comboBox1.Name = "comboBox1";
 			comboBox1.Size = new Size(210, 28);
 			comboBox1.TabIndex = 3;
 			// 
 			// btnParse
 			// 
-			btnParse.Location = new Point(590, 228);
+			btnParse.Location = new Point(590, 272);
 			btnParse.Name = "btnParse";
 			btnParse.Size = new Size(116, 38);
 			btnParse.TabIndex = 4;
@@ -83,7 +83,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(735, 308);
+			ClientSize = new Size(735, 336);
 			Controls.Add(btnParse);
 			Controls.Add(comboBox1);
 			Controls.Add(label2);
@@ -92,7 +92,7 @@
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			MaximizeBox = false;
 			Name = "InputForm";
-			Text = "Packet Parser";
+			Text = "NDPS - Packet Parser";
 			Load += InputForm_Load;
 			ResumeLayout(false);
 			PerformLayout();

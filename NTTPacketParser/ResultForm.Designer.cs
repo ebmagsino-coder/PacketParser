@@ -39,26 +39,28 @@
 			// 
 			// dgvMain
 			// 
+			dgvMain.BackgroundColor = SystemColors.ControlLight;
 			dgvMain.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dgvMain.Location = new Point(25, 30);
+			dgvMain.Location = new Point(25, 50);
 			dgvMain.Name = "dgvMain";
 			dgvMain.RowHeadersWidth = 51;
-			dgvMain.Size = new Size(819, 271);
+			dgvMain.Size = new Size(1175, 271);
 			dgvMain.TabIndex = 0;
 			// 
 			// dgvOtherDetails
 			// 
+			dgvOtherDetails.BackgroundColor = SystemColors.ControlLight;
 			dgvOtherDetails.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			dgvOtherDetails.Location = new Point(25, 351);
+			dgvOtherDetails.Location = new Point(25, 371);
 			dgvOtherDetails.Name = "dgvOtherDetails";
 			dgvOtherDetails.RowHeadersWidth = 51;
-			dgvOtherDetails.Size = new Size(819, 208);
+			dgvOtherDetails.Size = new Size(1175, 259);
 			dgvOtherDetails.TabIndex = 1;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(25, 7);
+			label1.Location = new Point(25, 27);
 			label1.Name = "label1";
 			label1.Size = new Size(98, 20);
 			label1.TabIndex = 2;
@@ -67,7 +69,7 @@
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Location = new Point(25, 328);
+			label2.Location = new Point(25, 348);
 			label2.Name = "label2";
 			label2.Size = new Size(117, 20);
 			label2.TabIndex = 3;
@@ -75,7 +77,7 @@
 			// 
 			// btnClose
 			// 
-			btnClose.Location = new Point(736, 576);
+			btnClose.Location = new Point(1092, 661);
 			btnClose.Name = "btnClose";
 			btnClose.Size = new Size(108, 45);
 			btnClose.TabIndex = 4;
@@ -87,7 +89,7 @@
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(868, 636);
+			ClientSize = new Size(1227, 732);
 			Controls.Add(btnClose);
 			Controls.Add(label2);
 			Controls.Add(label1);
@@ -97,7 +99,7 @@
 			MaximizeBox = false;
 			Name = "ResultForm";
 			StartPosition = FormStartPosition.CenterScreen;
-			Text = "ResultForm";
+			Text = "NDPS - Packet Parser";
 			Load += ResultForm_Load;
 			((System.ComponentModel.ISupportInitialize)dgvMain).EndInit();
 			((System.ComponentModel.ISupportInitialize)dgvOtherDetails).EndInit();

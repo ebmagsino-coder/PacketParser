@@ -191,7 +191,7 @@ namespace NTTPacketParser.Helpers
 			// 26. Other Details (TLV)
 			pos = reader.Position;
 			OtherDetails = TlvParser.Parse(reader, otherDetailsLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to data table" });
+			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to the 2nd table" });
 
 			// 27. Transaction Date and Time
 			if (reader.Position + 6 <= reader.Length - 3) // Check if we have enough bytes (6 for date + 3 for CRC+ETX)
