@@ -61,6 +61,19 @@ namespace NTTPacketParser.Helpers
 						}
 					}
 				}
+				else if (tag == 0x09) // DCC Details - format with labels
+				{
+					string rawValue = Encoding.ASCII.GetString(valueBytes);
+					string[] parts = rawValue.Split(',');
+					if (parts.Length >= 5)
+					{
+						value = $"[DCC Amount: {parts[0]}],[Currency: {parts[1]}],[Exchange rate: {parts[2]}],[Exchange bank: {parts[3]}],[Margin: {parts[4]}]";
+					}
+					else
+					{
+						value = rawValue; // Fallback to original if format unexpected
+					}
+				}
 				else // Default ASCII for all other tags
 				{
 					value = Encoding.ASCII.GetString(valueBytes);

@@ -94,7 +94,8 @@ namespace NTTPacketParser.Helpers
 			pos = reader.Position;
 			byte[] expiryBytes = reader.ReadBytes(2);
 			string expiry = string.Join(" ", expiryBytes.Select(b => b.ToString("X2")));
-			Fields.Add(new ParsedField { No = no++, Field = "Card Expiry Date", HexValue = reader.GetHexString(pos, 2), Value = $"{expiry} (masked)" });
+			string expiryValue = (expiryBytes[0] == 0x00 && expiryBytes[1] == 0x00) ? $"{expiry} (masked)" : expiry;
+			Fields.Add(new ParsedField { No = no++, Field = "Card Expiry Date", HexValue = reader.GetHexString(pos, 2), Value = expiryValue });
 
 			// 13. Card Type Length
 			pos = reader.Position;
