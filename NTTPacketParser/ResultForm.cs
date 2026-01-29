@@ -35,6 +35,8 @@ namespace NTTPacketParser
 
 		private void ResultForm_Load(object sender, EventArgs e)
 		{
+			label3.Text = "© 2026 NTT Data Payment Services — Internal Use Only";
+
 			dgvMain.AutoGenerateColumns = true;
 			dgvMain.ReadOnly = true;
 			dgvOtherDetails.AutoGenerateColumns = true;

@@ -33,6 +33,8 @@
 			label2 = new Label();
 			comboBox1 = new ComboBox();
 			btnParse = new Button();
+			label3 = new Label();
+			statusStrip1 = new StatusStrip();
 			SuspendLayout();
 			// 
 			// label1
@@ -71,6 +73,7 @@
 			// 
 			// btnParse
 			// 
+			btnParse.Cursor = Cursors.Hand;
 			btnParse.Location = new Point(590, 272);
 			btnParse.Name = "btnParse";
 			btnParse.Size = new Size(116, 38);
@@ -79,16 +82,38 @@
 			btnParse.UseVisualStyleBackColor = true;
 			btnParse.Click += btnParse_Click;
 			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Font = new Font("Segoe UI", 6F);
+			label3.Location = new Point(250, 343);
+			label3.Name = "label3";
+			label3.Size = new Size(251, 12);
+			label3.TabIndex = 5;
+			label3.Text = "© 2026 NTT Data Payment Services — Internal Use Only";
+			label3.TextAlign = ContentAlignment.TopRight;
+			// 
+			// statusStrip1
+			// 
+			statusStrip1.ImageScalingSize = new Size(20, 20);
+			statusStrip1.Location = new Point(0, 338);
+			statusStrip1.Name = "statusStrip1";
+			statusStrip1.Size = new Size(735, 22);
+			statusStrip1.TabIndex = 6;
+			statusStrip1.Text = "statusStrip1";
+			// 
 			// InputForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(735, 336);
+			ClientSize = new Size(735, 360);
+			Controls.Add(label3);
 			Controls.Add(btnParse);
 			Controls.Add(comboBox1);
 			Controls.Add(label2);
 			Controls.Add(txtInput);
 			Controls.Add(label1);
+			Controls.Add(statusStrip1);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			MaximizeBox = false;
 			Name = "InputForm";
@@ -105,5 +130,7 @@
 		private Label label2;
 		private ComboBox comboBox1;
 		private Button btnParse;
+		private Label label3;
+		private StatusStrip statusStrip1;
 	}
 }

@@ -33,6 +33,8 @@
 			label1 = new Label();
 			label2 = new Label();
 			btnClose = new Button();
+			statusStrip1 = new StatusStrip();
+			label3 = new Label();
 			((System.ComponentModel.ISupportInitialize)dgvMain).BeginInit();
 			((System.ComponentModel.ISupportInitialize)dgvOtherDetails).BeginInit();
 			SuspendLayout();
@@ -77,6 +79,7 @@
 			// 
 			// btnClose
 			// 
+			btnClose.Cursor = Cursors.Hand;
 			btnClose.Location = new Point(1092, 661);
 			btnClose.Name = "btnClose";
 			btnClose.Size = new Size(108, 45);
@@ -85,16 +88,38 @@
 			btnClose.UseVisualStyleBackColor = true;
 			btnClose.Click += btnClose_Click;
 			// 
+			// statusStrip1
+			// 
+			statusStrip1.ImageScalingSize = new Size(20, 20);
+			statusStrip1.Location = new Point(0, 723);
+			statusStrip1.Name = "statusStrip1";
+			statusStrip1.Size = new Size(1227, 22);
+			statusStrip1.TabIndex = 5;
+			statusStrip1.Text = "statusStrip1";
+			// 
+			// label3
+			// 
+			label3.AutoSize = true;
+			label3.Font = new Font("Segoe UI", 6F);
+			label3.Location = new Point(491, 728);
+			label3.Name = "label3";
+			label3.Size = new Size(251, 12);
+			label3.TabIndex = 6;
+			label3.Text = "© 2026 NTT Data Payment Services — Internal Use Only";
+			label3.TextAlign = ContentAlignment.TopRight;
+			// 
 			// ResultForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1227, 732);
+			ClientSize = new Size(1227, 745);
+			Controls.Add(label3);
 			Controls.Add(btnClose);
 			Controls.Add(label2);
 			Controls.Add(label1);
 			Controls.Add(dgvOtherDetails);
 			Controls.Add(dgvMain);
+			Controls.Add(statusStrip1);
 			FormBorderStyle = FormBorderStyle.FixedSingle;
 			MaximizeBox = false;
 			Name = "ResultForm";
@@ -114,5 +139,7 @@
 		private Label label1;
 		private Label label2;
 		private Button btnClose;
+		private StatusStrip statusStrip1;
+		private Label label3;
 	}
 }

@@ -11,6 +11,8 @@ namespace NTTPacketParser
 
 		private void InputForm_Load(object sender, EventArgs e)
 		{
+			label3.Text = "© 2026 NTT Data Payment Services — Internal Use Only";
+
 			comboBox1.Items.Add("Response");
 			comboBox1.SelectedIndex = 0;
 
