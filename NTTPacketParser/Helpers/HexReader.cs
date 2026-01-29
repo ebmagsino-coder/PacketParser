@@ -10,6 +10,7 @@ namespace NTTPacketParser.Helpers
 	{
 		private readonly byte[] _data;
 		public int Position { get; private set; }
+		public int Length => _data.Length;
 
 		public HexReader(byte[] data)
 		{

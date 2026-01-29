@@ -14,6 +14,15 @@ namespace NTTPacketParser.Helpers
 			{ 0x01, "App Name" },
 			{ 0x02, "App AID" },
 			{ 0x03, "TC" },
+			{ 0x04, "Installment Type" },
+			{ 0x05, "Installment Term" },
+			{ 0x06, "Gross Amount" },
+			{ 0x07, "Installment Rate" },
+			{ 0x08, "Monthly Amortization" },
+			{ 0x09, "DCC Details" },
+			{ 0x0A, "QR String" },
+			{ 0x0B, "Previous Balance" },
+			{ 0x0C, "Available Balance" },
 			{ 0x0D, "Original RRN" }
 		};
 
@@ -41,7 +50,6 @@ namespace NTTPacketParser.Helpers
 				// Handle specific tag formatting
 				if (tag == 0x03) // TC - convert ASCII hex to actual hex
 				{
-					// ASCII "39383334393642333143363342463642" -> hex "983496B31C63BF6B"
 					string asciiHex = Encoding.ASCII.GetString(valueBytes);
 					value = "";
 					for (int i = 0; i < asciiHex.Length; i += 2)
@@ -53,11 +61,7 @@ namespace NTTPacketParser.Helpers
 						}
 					}
 				}
-				else if (tag == 0x0D) // Original RRN - show as ASCII
-				{
-					value = Encoding.ASCII.GetString(valueBytes);
-				}
-				else // Default ASCII
+				else // Default ASCII for all other tags
 				{
 					value = Encoding.ASCII.GetString(valueBytes);
 				}

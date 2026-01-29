@@ -28,6 +28,7 @@ namespace NTTPacketParser.Helpers
 			string cmdDesc = cmd switch
 			{
 				0xD2 => "D2 - Void Command",
+				0xB9 => "B9 - Load Command",
 				_ => $"{cmd:X2} - Unknown Command"
 			};
 			Fields.Add(new ParsedField { No = no++, Field = "Command ID", HexValue = reader.GetHexString(pos, 1), Value = cmdDesc });
@@ -36,6 +37,16 @@ namespace NTTPacketParser.Helpers
 			pos = reader.Position;
 			ushort dataLen = reader.ReadUInt16();
 			Fields.Add(new ParsedField { No = no++, Field = "Data length", HexValue = reader.GetHexString(pos, 2), Value = $"{dataLen} length" });
+
+			// Calculate data end position (STX + CMD + LEN + DATA)
+			int dataEndPos = 3 + dataLen;
+
+			// Only parse fields if we have enough data
+			if (reader.Length < dataEndPos + 3) // +3 for CRC+ETX
+			{
+				Fields.Add(new ParsedField { No = no++, Field = "Error", HexValue = "", Value = $"Packet too short. Expected {dataEndPos + 3} bytes, got {reader.Length}" });
+				return;
+			}
 
 			// 4. Constant 01
 			pos = reader.Position;
@@ -74,8 +85,8 @@ namespace NTTPacketParser.Helpers
 
 			// 11. Card Holder Name
 			pos = reader.Position;
-			string holderName = reader.ReadAscii(holderLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Name", HexValue = reader.GetHexString(pos, holderLen), Value = holderName });
+			string holderName = holderLen > 0 ? reader.ReadAscii(holderLen) : "";
+			Fields.Add(new ParsedField { No = no++, Field = "Card Holder Name", HexValue = holderLen > 0 ? reader.GetHexString(pos, holderLen) : "", Value = holderName });
 
 			// 12. Card Expiry Date
 			pos = reader.Position;
@@ -90,14 +101,15 @@ namespace NTTPacketParser.Helpers
 
 			// 14. Card Type
 			pos = reader.Position;
-			string cardType = reader.ReadAscii(cardTypeLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Card Type", HexValue = reader.GetHexString(pos, cardTypeLen), Value = cardType });
+			string cardType = cardTypeLen > 0 ? reader.ReadAscii(cardTypeLen) : "";
+			Fields.Add(new ParsedField { No = no++, Field = "Card Type", HexValue = cardTypeLen > 0 ? reader.GetHexString(pos, cardTypeLen) : "", Value = cardType });
 
 			// 15. Entry Mode
 			pos = reader.Position;
 			byte entryMode = reader.ReadByte();
 			string entryModeDesc = entryMode switch
 			{
+				0x02 => "02 - Swipe",
 				0x07 => "07 - Contactless",
 				_ => $"{entryMode:X2} - Unknown"
 			};
@@ -110,8 +122,8 @@ namespace NTTPacketParser.Helpers
 
 			// 17. ECR Invoice Number
 			pos = reader.Position;
-			string ecrInvoice = reader.ReadAscii(ecrInvoiceLen);
-			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Number", HexValue = reader.GetHexString(pos, ecrInvoiceLen), Value = ecrInvoice });
+			string ecrInvoice = ecrInvoiceLen > 0 ? reader.ReadAscii(ecrInvoiceLen) : "";
+			Fields.Add(new ParsedField { No = no++, Field = "ECR Invoice Number", HexValue = ecrInvoiceLen > 0 ? reader.GetHexString(pos, ecrInvoiceLen) : "", Value = ecrInvoice });
 
 			// 18. Batch Number
 			pos = reader.Position;
@@ -154,6 +166,7 @@ namespace NTTPacketParser.Helpers
 			string receiptDesc = receiptFormat switch
 			{
 				0x01 => "01 - Card format",
+				0x09 => "09 - EGC Reload format",
 				_ => $"{receiptFormat:X2} - Unknown"
 			};
 			Fields.Add(new ParsedField { No = no++, Field = "Receipt Format", HexValue = reader.GetHexString(pos, 1), Value = receiptDesc });
@@ -176,33 +189,40 @@ namespace NTTPacketParser.Helpers
 			// 26. Other Details (TLV)
 			pos = reader.Position;
 			OtherDetails = TlvParser.Parse(reader, otherDetailsLen);
-			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "Refer to Parsed Data Part table" });
+			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to data table" });
 
 			// 27. Transaction Date and Time
-			pos = reader.Position;
-			byte[] dateTimeBytes = reader.ReadBytes(6);
-			// Hex: 11 10 25 11 33 09 = YY MM DD HH MM SS in BCD format
-			// 0x25 = 25 (year), 0x11 = 11 (month), 0x10 = 10 (day), 0x11 = 11 (hour), 0x33 = 33 (min), 0x09 = 09 (sec)
-			var year = 2000 + ((dateTimeBytes[2] >> 4) * 10) + (dateTimeBytes[2] & 0x0F); // 0x25 -> 25 -> 2025
-			var month = ((dateTimeBytes[0] >> 4) * 10) + (dateTimeBytes[0] & 0x0F); // 0x11 -> 11
-			var day = ((dateTimeBytes[1] >> 4) * 10) + (dateTimeBytes[1] & 0x0F); // 0x10 -> 10
-			var hour = ((dateTimeBytes[3] >> 4) * 10) + (dateTimeBytes[3] & 0x0F); // 0x11 -> 11
-			var minute = ((dateTimeBytes[4] >> 4) * 10) + (dateTimeBytes[4] & 0x0F); // 0x33 -> 33
-			var second = ((dateTimeBytes[5] >> 4) * 10) + (dateTimeBytes[5] & 0x0F); // 0x09 -> 09
-			
-			string dateTime = $"{GetMonthName(month)}. {day:D2}, {year} {hour:D2}:{minute:D2}:{second:D2}";
-			Fields.Add(new ParsedField { No = no++, Field = "Transaction Date and Time", HexValue = reader.GetHexString(pos, 6), Value = dateTime });
+			if (reader.Position + 6 <= reader.Length - 3) // Check if we have enough bytes (6 for date + 3 for CRC+ETX)
+			{
+				pos = reader.Position;
+				byte[] dateTimeBytes = reader.ReadBytes(6);
+				var year = 2000 + ((dateTimeBytes[2] >> 4) * 10) + (dateTimeBytes[2] & 0x0F);
+				var month = ((dateTimeBytes[0] >> 4) * 10) + (dateTimeBytes[0] & 0x0F);
+				var day = ((dateTimeBytes[1] >> 4) * 10) + (dateTimeBytes[1] & 0x0F);
+				var hour = ((dateTimeBytes[3] >> 4) * 10) + (dateTimeBytes[3] & 0x0F);
+				var minute = ((dateTimeBytes[4] >> 4) * 10) + (dateTimeBytes[4] & 0x0F);
+				var second = ((dateTimeBytes[5] >> 4) * 10) + (dateTimeBytes[5] & 0x0F);
+				
+				string dateTime = $"{GetMonthName(month)}. {day:D2}, {year} {hour:D2}:{minute:D2}:{second:D2}";
+				Fields.Add(new ParsedField { No = no++, Field = "Transaction Date and Time", HexValue = reader.GetHexString(pos, 6), Value = dateTime });
+			}
 
 			// 28. CRC
-			pos = reader.Position;
-			byte[] crc = reader.ReadBytes(2);
-			string crcValue = string.Join(" ", crc.Select(b => b.ToString("X2")));
-			Fields.Add(new ParsedField { No = no++, Field = "CRC", HexValue = reader.GetHexString(pos, 2), Value = crcValue });
+			if (reader.Position + 2 <= reader.Length - 1) // Check if we have CRC + ETX
+			{
+				pos = reader.Position;
+				byte[] crc = reader.ReadBytes(2);
+				string crcValue = string.Join(" ", crc.Select(b => b.ToString("X2")));
+				Fields.Add(new ParsedField { No = no++, Field = "CRC", HexValue = reader.GetHexString(pos, 2), Value = crcValue });
+			}
 
 			// 29. ETX
-			pos = reader.Position;
-			byte etx = reader.ReadByte();
-			Fields.Add(new ParsedField { No = no++, Field = "ETX", HexValue = reader.GetHexString(pos, 1), Value = etx.ToString("X2") });
+			if (reader.Position < reader.Length)
+			{
+				pos = reader.Position;
+				byte etx = reader.ReadByte();
+				Fields.Add(new ParsedField { No = no++, Field = "ETX", HexValue = reader.GetHexString(pos, 1), Value = etx.ToString("X2") });
+			}
 		}
 
 		private static string GetMonthName(int month)
