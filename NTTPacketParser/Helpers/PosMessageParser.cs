@@ -28,7 +28,9 @@ namespace NTTPacketParser.Helpers
 			string cmdDesc = cmd switch
 			{
 				0xD2 => "D2 - Void Command",
-				0xB9 => "B9 - Load Command",
+				0xB8 => "B8 - Activation Command",
+				0xB9 => "B9 - Reload Command",
+				0xB1 => "B1 - Payment Command",
 				_ => $"{cmd:X2} - Unknown Command"
 			};
 			Fields.Add(new ParsedField { No = no++, Field = "Command ID", HexValue = reader.GetHexString(pos, 1), Value = cmdDesc });
