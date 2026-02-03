@@ -40,14 +40,21 @@ namespace NTTPacketParser.Helpers
 			ushort dataLen = reader.ReadUInt16();
 			Fields.Add(new ParsedField { No = no++, Field = "Data length", HexValue = reader.GetHexString(pos, 2), Value = $"{dataLen} length" });
 
-			// Calculate data end position (STX + CMD + LEN + DATA)
-			int dataEndPos = 3 + dataLen;
-
-			// Only parse fields if we have enough data
-			if (reader.Length < dataEndPos + 3) // +3 for CRC+ETX
+			// Calculate data end position
+			// Packet structure: STX(1) + CMD(1) + LEN(2) + DATA(dataLen) + CRC(2) + ETX(1)
+			// Data length covers fields 4-27 only, CRC and ETX are additional
+			int expectedDataEnd = 4 + dataLen;
+			
+			// Check if we have at least the data portion
+			if (reader.Length < expectedDataEnd)
 			{
-				Fields.Add(new ParsedField { No = no++, Field = "Error", HexValue = "", Value = $"Packet too short. Expected {dataEndPos + 3} bytes, got {reader.Length}" });
-				return;
+				// If packet length doesn't match expected data end, it's an error
+				if (reader.Length != dataLen)
+				{
+					Fields.Add(new ParsedField { No = no++, Field = "Error", HexValue = "", Value = $"Data section too short. Expected {expectedDataEnd} bytes for data, got {reader.Length}" });
+					return;
+				}
+				// If packet length equals data length, continue parsing (packet without CRC+ETX)
 			}
 
 			// 4. Constant 01
@@ -113,6 +120,7 @@ namespace NTTPacketParser.Helpers
 			string entryModeDesc = entryMode switch
 			{
 				0x02 => "02 - Swipe",
+				0x03 => "03 - QR",
 				0x07 => "07 - Contactless",
 				_ => $"{entryMode:X2} - Unknown"
 			};
@@ -148,6 +156,7 @@ namespace NTTPacketParser.Helpers
 			string acquirerDesc = acquirerCode switch
 			{
 				0x07 => "07 - BDO Credit",
+				0x0B => "0B - EWALLET",
 				_ => $"{acquirerCode:X2} - Unknown"
 			};
 			Fields.Add(new ParsedField { No = no++, Field = "Acquirer Code", HexValue = reader.GetHexString(pos, 1), Value = acquirerDesc });
@@ -169,6 +178,7 @@ namespace NTTPacketParser.Helpers
 			string receiptDesc = receiptFormat switch
 			{
 				0x01 => "01 - Card format",
+				0x04 => "04 - Ewallet",
 				0x09 => "09 - EGC Reload format",
 				_ => $"{receiptFormat:X2} - Unknown"
 			};
@@ -195,7 +205,7 @@ namespace NTTPacketParser.Helpers
 			Fields.Add(new ParsedField { No = no++, Field = "Other Details", HexValue = reader.GetHexString(pos, otherDetailsLen), Value = "refer to the 2nd table" });
 
 			// 27. Transaction Date and Time
-			if (reader.Position + 6 <= reader.Length - 3) // Check if we have enough bytes (6 for date + 3 for CRC+ETX)
+			if (reader.Position + 6 <= reader.Length)
 			{
 				pos = reader.Position;
 				byte[] dateTimeBytes = reader.ReadBytes(6);
@@ -211,7 +221,7 @@ namespace NTTPacketParser.Helpers
 			}
 
 			// 28. CRC
-			if (reader.Position + 2 <= reader.Length - 1) // Check if we have CRC + ETX
+			if (reader.Position + 2 <= reader.Length)
 			{
 				pos = reader.Position;
 				byte[] crc = reader.ReadBytes(2);
